@@ -2,7 +2,7 @@
 
 ## Dokumentacja + slajdy
 
-* https://infotraining.bitbucket.io/cpp-adv
+* https://infotraining.bitbucket.io/cpp-dp
 
 ## Środowisko (2 opcje do wyboru)
 
