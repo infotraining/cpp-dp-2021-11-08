@@ -4,6 +4,10 @@
 
 * https://infotraining.bitbucket.io/cpp-dp
 
+## Linki
+
+* https://github.com/ldionne/dyno - implementacja polimofizmu dynamicznego
+
 ## IDE - Visual Studio Code
 
 * [Visual Studio Code](https://code.visualstudio.com/)
