@@ -59,7 +59,8 @@ public:
             cout << "Loading " << shape_id << "..." << endl;
 
             auto shape = shape_factory_.create(shape_id);
-            auto shape_rw = shape_rw_factory_.create(make_type_index(*shape));
+            auto shape_rw 
+                = shape_rw_factory_.create(make_type_index(*shape));
 
             shape_rw->read(*shape, file_in);
 

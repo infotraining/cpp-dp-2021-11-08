@@ -6,8 +6,9 @@ using namespace Drawing;
 
 namespace
 {
-    bool is_registered = SingletonShapeFactory::instance()
-                             .register_creator(Rectangle::id, &make_unique<Rectangle>);
+    bool is_registered 
+        = SingletonShapeFactory::instance()
+            .register_creator(Rectangle::id, &make_unique<Rectangle>);
 }
 
 Rectangle::Rectangle(int x, int y, int w, int h)
