@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <deque>
 
 #include "factory.hpp"
 
@@ -86,4 +87,18 @@ int main()
 
     Service srv(logger_factory.at("DbLogger"));
     srv.run();
+
+    std::vector<int> vec = {1, 2, 3};
+
+    for(const auto& item : vec)
+    {
+        std::cout << item << " ";
+    }
+    std::cout << "\n";
+
+    for(auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        std::cout << *it << " ";
+    }
+    std::cout << "\n";
 }
