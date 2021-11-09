@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "shape.hpp"
+#include "shape_group.hpp"
 #include "shape_factories.hpp"
 
 using namespace std;
@@ -16,25 +17,23 @@ using namespace Drawing::IO;
 
 class GraphicsDoc
 {
-    vector<unique_ptr<Shape>> shapes_;
-    ShapeFactory& shape_factory_;
+    ShapeGroup shapes_;
     ShapeRWFactory& shape_rw_factory_;
 
 public:
-    GraphicsDoc(ShapeFactory& shape_factory, ShapeRWFactory& shape_rw_factory)
-        : shape_factory_{shape_factory}, shape_rw_factory_{shape_rw_factory}
+    GraphicsDoc(ShapeRWFactory& shape_rw_factory)
+        : shape_rw_factory_{shape_rw_factory}
     {
     }
 
     void add(unique_ptr<Shape> shp)
     {
-        shapes_.push_back(move(shp));
+        shapes_.add(move(shp));
     }
 
     void render()
     {
-        for (const auto& shp : shapes_)
-            shp->draw();
+        shapes_.draw();
     }
 
     void load(const string& filename)
@@ -56,13 +55,11 @@ public:
                 return;
 
             cout << "Loading " << shape_id << "..." << endl;
+            assert(shape_id == ShapeGroup::id);
 
-            auto shape = shape_factory_.create(shape_id);
-            auto shape_rw = shape_rw_factory_.create(make_type_index(*shape));
+            auto shape_group_rw = shape_rw_factory_.create(make_type_index<ShapeGroup>());
 
-            shape_rw->read(*shape, file_in);
-
-            shapes_.push_back(move(shape));
+            shape_group_rw->read(shapes_, file_in);
         }
     }
 
@@ -70,11 +67,9 @@ public:
     {
         ofstream file_out{filename};
 
-        for (const auto& shp : shapes_)
-        {
-            auto shape_rw = shape_rw_factory_.create(make_type_index(*shp));
-            shape_rw->write(*shp, file_out);
-        }
+        auto shape_group_rw = shape_rw_factory_.create(make_type_index<ShapeGroup>());
+        shape_group_rw->write(shapes_, file_out);
+
     }
 };
 
@@ -82,7 +77,7 @@ int main()
 {
     cout << "Start..." << endl;
 
-    GraphicsDoc doc(SingletonShapeFactory::instance(), SingletonShapeRWFactory::instance());
+    GraphicsDoc doc(SingletonShapeRWFactory::instance());
 
     doc.load("drawing.txt");
 

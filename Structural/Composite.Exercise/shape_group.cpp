@@ -4,3 +4,10 @@
 
 using namespace std;
 using namespace Drawing;
+
+namespace 
+{
+    bool is_registered = 
+        SingletonShapeFactory::instance()
+            .register_creator(ShapeGroup::id, &std::make_unique<ShapeGroup>);
+}
