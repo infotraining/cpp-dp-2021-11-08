@@ -77,6 +77,69 @@ public:
     }
 };
 
+class CoffeeDecorator : public CoffeeBase
+{
+    std::unique_ptr<Coffee> coffee_;
+public:
+    CoffeeDecorator(std::unique_ptr<Coffee> c, float price, std::string description)
+        : coffee_{std::move(c)}, CoffeeBase{price, std::move(description)}
+    {}
+
+    float get_total_price() const override
+    {
+        return CoffeeBase::get_total_price() + coffee_->get_total_price();        
+    }
+    
+    std::string get_description() const override
+    {
+        return coffee_->get_description() + " + " + CoffeeBase::get_description();
+    }
+
+    void prepare() override
+    {
+        coffee_->prepare();
+    }
+};
+
+class Whipped : public CoffeeDecorator
+{
+public:
+	Whipped(std::unique_ptr<Coffee> c) : CoffeeDecorator{std::move(c), 2.5f, "Whipped Cream"}
+    {}
+
+	void prepare() override
+    {
+        CoffeeDecorator::prepare();
+        std::cout << "Adding whipped cream...\n";
+    }
+};
+
+class Whisky : public CoffeeDecorator
+{
+public:
+	Whisky(std::unique_ptr<Coffee> c) : CoffeeDecorator{std::move(c), 6.0f, "Whisky"}
+    {}
+
+	void prepare() override
+    {
+        CoffeeDecorator::prepare();
+        std::cout << "Adding Whisky...\n";
+    }
+};
+
+class ExtraEspresso : public CoffeeDecorator
+{
+public:
+	ExtraEspresso(std::unique_ptr<Coffee> c) : CoffeeDecorator{std::move(c), 4.0f, "Extra espresso"}
+    {}
+
+	void prepare() override
+    {
+        CoffeeDecorator::prepare();
+        std::cout << "Adding extra espresso...\n";
+    }
+};
+
 // TO DO: Condiments: Whipped: 2.5$, Whisky: 6.0$, ExtraEspresso: 4.0$
 
 // TO DO: Add CoffeeDecorator and concrete decorators for condiments 
