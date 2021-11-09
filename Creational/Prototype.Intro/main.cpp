@@ -10,10 +10,22 @@ class Engine
 public:
     virtual void start() = 0;
     virtual void stop() = 0;
+    virtual std::unique_ptr<Engine> clone() const = 0;
     virtual ~Engine() = default;
 };
 
-class Diesel : public Engine
+// CRTP
+template <typename EngineType, typename EngineBase = Engine>
+class CloneableEngine : public EngineBase
+{
+public:
+    std::unique_ptr<Engine> clone() const override
+    {
+        return std::make_unique<EngineType>(static_cast<const EngineType&>(*this));
+    }
+};
+
+class Diesel : public CloneableEngine<Diesel>
 {
 public:
     virtual void start() override
@@ -27,7 +39,7 @@ public:
     }
 };
 
-class TDI : public Diesel
+class TDI : public CloneableEngine<TDI, Diesel>
 {
 public:
     virtual void start() override
@@ -41,7 +53,7 @@ public:
     }
 };
 
-class Hybrid : public Engine
+class Hybrid : public CloneableEngine<Hybrid>
 {
 public:
     virtual void start() override
@@ -65,6 +77,11 @@ public:
     {
     }
 
+    Car(const Car& source)
+        : engine_{source.engine_->clone()}
+    {
+    }
+
     void drive(int km)
     {
         engine_->start();
@@ -75,8 +92,13 @@ public:
 
 int main()
 {
-    Car c1{make_unique<Hybrid>()};
+    Car c1{make_unique<TDI>()};
     c1.drive(100);
+
+    std::cout << "\n\n";
+
+    Car c2 = c1;
+    c2.drive(200);
 
     cout << "\n";
 }
