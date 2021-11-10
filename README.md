@@ -3,6 +3,8 @@
 ## Dokumentacja + slajdy
 
 * https://infotraining.bitbucket.io/cpp-dp
+* https://github.com/facebook/folly
+* https://abseil.io/docs/cpp/
 
 ## Linki
 
