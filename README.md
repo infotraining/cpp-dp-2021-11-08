@@ -9,6 +9,7 @@
 * https://infotraining.bitbucket.io/cpp-dp
 * https://github.com/facebook/folly
 * https://abseil.io/docs/cpp/
+* https://github.com/boost-ext/sml
 
 ## Linki
 
