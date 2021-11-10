@@ -19,7 +19,7 @@ project(${PROJECT_MAIN})
 
 add_subdirectory(src)
 enable_testing()
-add_subdirectory(gtests)
+# add_subdirectory(gtests)
 
 ####################
 # Main app
@@ -34,7 +34,7 @@ target_link_libraries(${PROJECT_MAIN} PUBLIC ${PROJECT_LIB})
 ####################
 # Boost DI
 find_path(BOOST_DI_INCLUDE_DIRS "boost/di.hpp")
-target_include_directories(${PROJECT_MAIN} PRIVATE ${BOOST_DI_INCLUDE_DIRS})
+target_include_directories(${PROJECT_MAIN} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
 
 # #----------------------------------------
 # # set compiler options

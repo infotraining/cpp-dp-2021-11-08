@@ -10,8 +10,8 @@ namespace di = boost::di;
 int main()
 {
     const auto injector = di::make_injector(
-        di::bind<Console>().to<Terminal>(),
-        di::bind<Clipboard>().to<SharedClipboard>());
+         di::bind<Console>().to<Terminal>(),
+         di::bind<Clipboard>().to<SharedClipboard>());
 
     auto app = injector.create<Application>();
 
