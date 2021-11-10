@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -30,15 +31,90 @@ enum StatisticsType
     sum
 };
 
+using FStatistics = std::function<Results(const Data& data)>;
+
+struct IStatistics
+{
+    virtual Results calculate(const Data& data) = 0;
+    virtual ~IStatistics() = default;
+};
+
+struct Average : IStatistics
+{
+    Results calculate(const Data& data) override
+    {
+        double sum = std::accumulate(data.begin(), data.end(), 0.0);
+        double avg = sum / data.size();
+
+        return {{"Avg", avg}};
+    }
+};
+
+struct Median : IStatistics
+{
+    Results calculate(const Data& data) override
+    {
+        double sum = std::accumulate(data.begin(), data.end(), 0.0);
+        double avg = sum / data.size();
+
+        return {{"Median", avg}};
+    }
+};
+
+struct MinMax : IStatistics
+{
+    Results calculate(const Data& data) override
+    {
+        double min = *(std::min_element(data.begin(), data.end()));
+        double max = *(std::max_element(data.begin(), data.end()));
+
+        return {{"Min", min}, {"Max", max}};
+    }
+};
+
+struct Sum : IStatistics
+{
+    Results calculate(const Data& data) override
+    {
+        double sum = std::accumulate(data.begin(), data.end(), 0.0);
+
+        return {{"Sum", sum}};
+    }
+};
+
+class StatGroup : public IStatistics
+{
+private:
+    std::vector<std::shared_ptr<IStatistics>> _stats;
+
+public:
+    StatGroup(std::vector<std::shared_ptr<IStatistics>> stats)
+        : _stats {std::move(stats)} {
+
+        };
+
+    Results calculate(const Data& data) override
+    {
+        Results r = {};
+        for (const auto& stat : _stats)
+        {
+            auto temp_r = stat->calculate(data);
+            r.insert(r.end(), temp_r.begin(), temp_r.end());
+        }
+
+        return r;
+    }
+};
+
 class DataAnalyzer
 {
-    StatisticsType stat_type_;
+    std::shared_ptr<IStatistics> statistics_;
     Data data_;
     Results results_;
 
 public:
-    DataAnalyzer(StatisticsType stat_type)
-        : stat_type_{stat_type}
+    DataAnalyzer(std::shared_ptr<IStatistics> stat)
+        : statistics_ {stat}
     {
     }
 
@@ -60,35 +136,16 @@ public:
         std::cout << "File " << file_name << " has been loaded...\n";
     }
 
-    void set_statistics(StatisticsType stat_type)
+    void set_statistics(std::shared_ptr<IStatistics> stat)
     {
-        stat_type_ = stat_type;
+        statistics_ = stat;
     }
 
     void calculate()
     {
-        if (stat_type_ == avg)
-        {
-            double sum = std::accumulate(data_.begin(), data_.end(), 0.0);
-            double avg = sum / data_.size();
+        auto stat_results = statistics_->calculate(data_);
 
-            StatResult result("Avg", avg);
-            results_.push_back(result);
-        }
-        else if (stat_type_ == min_max)
-        {
-            double min = *(std::min_element(data_.begin(), data_.end()));
-            double max = *(std::max_element(data_.begin(), data_.end()));
-
-            results_.push_back(StatResult("Min", min));
-            results_.push_back(StatResult("Max", max));
-        }
-        else if (stat_type_ == sum)
-        {
-            double sum = std::accumulate(data_.begin(), data_.end(), 0.0);
-
-            results_.push_back(StatResult("Sum", sum));
-        }
+        results_.insert(results_.end(), begin(stat_results), end(stat_results));
     }
 
     const Results& results() const
@@ -105,23 +162,21 @@ void show_results(const Results& results)
 
 int main()
 {
-    DataAnalyzer da{avg};
+    std::shared_ptr<IStatistics> avg = std::make_shared<Average>();
+    std::shared_ptr<IStatistics> min_max = std::make_shared<MinMax>();
+    std::shared_ptr<IStatistics> sum = std::make_shared<Sum>();
+
+    auto std_stats = std::make_shared<StatGroup>(std::vector{avg, min_max, sum});
+    auto extra_stats = std::make_shared<StatGroup>(std::vector<std::shared_ptr<IStatistics>>{std_stats, std::make_shared<Median>()});
+
+    DataAnalyzer da{extra_stats};
     da.load_data("data.dat");
-
     da.calculate();
-
-    da.set_statistics(min_max);
-    da.calculate();
-
-    da.set_statistics(sum);
-    da.calculate();
-
     show_results(da.results());
 
     std::cout << "\n\n";
 
     da.load_data("new_data.dat");
     da.calculate();
-
     show_results(da.results());
 }
