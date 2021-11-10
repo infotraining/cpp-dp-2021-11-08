@@ -1,16 +1,19 @@
 #include <iostream>
 #include <tuple>
 #include <vector>
-//#include <boost/flyweight.hpp>
+#include <boost/flyweight.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
 
+struct first_name_pool{};
+struct last_name_pool{};
+
 class Taxpayer
 {
     int id_;
-    std::string first_name_;
-    std::string last_name_;
+    boost::flyweight<std::string, boost::flyweights::tag<first_name_pool>> first_name_;
+    boost::flyweight<std::string> last_name_;
 
 public:
     Taxpayer(int id, const string& imie, const string& nazwisko)
@@ -25,7 +28,7 @@ public:
         return id_;
     }
 
-    string first_name() const
+    const string& first_name() const
     {
         return first_name_;
     }
@@ -37,8 +40,8 @@ public:
 
     void to_upper()
     {
-        boost::to_upper(first_name_);
-        boost::to_upper(last_name_);
+        first_name_ = boost::to_upper_copy(first_name_.get());
+        last_name_ = boost::to_upper_copy(last_name_.get());
     }
 
     string last_name() const
@@ -72,4 +75,6 @@ int main()
     {
         cout << p.first_name() << " " << p.last_name() << endl;
     }
+
+    payers.clear();
 }
