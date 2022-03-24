@@ -6,24 +6,18 @@
 #include <vector>
 
 using DataRow = std::vector<std::string>;
+
 using HtmlDocument = std::string;
 using CsvDocument = std::vector<std::string>;
 
-class ReportBuilder;
 
-class RowBuilder
-{
-public:
-    virtual RowBuilder& add_row(const DataRow& data_row) = 0;
-    virtual ReportBuilder& end_data() = 0;
-    virtual ~RowBuilder() = default;
-};
-
-class ReportBuilder : public RowBuilder
+class ReportBuilder 
 {
 public:
     virtual ReportBuilder& add_header(const std::string& header_text) = 0;
-    virtual RowBuilder& begin_data() = 0;
+    virtual ReportBuilder& begin_data() = 0;
+    virtual ReportBuilder& add_row(const DataRow& data_row) = 0;
+    virtual ReportBuilder& end_data() = 0;
     virtual ReportBuilder& add_footer(const std::string& footer) = 0;
 };
 

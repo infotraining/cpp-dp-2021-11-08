@@ -81,14 +81,14 @@ int main()
     ///////////////////////////////////////////////////////////
     cout << "///////////////////////////////////////////////////////////\n";
 
-    HtmlReportBuilder html_bldr;
-    html_bldr
+    HtmlReportBuilder html_builder;
+    html_builder
         .add_header("TITLE")
-        .begin_data()
-            .add_row({"one", "two", "three"})
-            .add_row({"four", "five", "seconds"})
-        .end_data()
-        .add_footer("Copyright 2021");
+            .begin_data()
+                .add_row({"one", "two", "three"})
+                .add_row({"four", "five", "second"})
+            .end_data()
+        .add_footer("COPYRIGHT");
 
-    std::cout << html_bldr.get_report() << std::endl;
+    std::cout << html_builder.get_report() << std::endl;
 }
