@@ -7,13 +7,14 @@
 ## Dokumentacja + slajdy
 
 * https://infotraining.bitbucket.io/cpp-dp
-* https://github.com/facebook/folly
-* https://abseil.io/docs/cpp/
-* https://github.com/boost-ext/sml
+
 
 ## Linki
 
 * https://github.com/ldionne/dyno - implementacja polimofizmu dynamicznego
+* https://github.com/facebook/folly
+* https://abseil.io/docs/cpp/
+* https://github.com/boost-ext/sml
 
 ## IDE - Visual Studio Code
 
