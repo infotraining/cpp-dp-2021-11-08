@@ -8,7 +8,7 @@
 
 class Bitmap
 {
-    struct BitmapImpl;
+    struct BitmapImpl; // forward declaration
 
     std::unique_ptr<BitmapImpl> pimpl_;
 public:

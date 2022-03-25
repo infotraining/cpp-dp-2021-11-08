@@ -1,27 +1,49 @@
 #include "bitmap.hpp"
+
 #include <algorithm>
 #include <array>
+#include <deque>
 
 using namespace std;
 
-struct Bitmap::BitmapImpl 
+struct Bitmap::BitmapImpl
 {
-    std::vector<uint8_t> image_;
+    char* pixels_;
+    size_t size_;
+
+    BitmapImpl(char* image, size_t size)
+        : pixels_ {image}
+        , size_ {size}
+    {
+    }
+
+    void render()
+    {
+       for (size_t i = 0; i < size_; ++i)
+        cout << pixels_[i]; 
+    }
+
+    BitmapImpl(const BitmapImpl&) = delete;
+
+    ~BitmapImpl()
+    {
+        delete[] pixels_;
+    }
 };
 
-Bitmap::~Bitmap() = default;
-
-Bitmap::Bitmap(size_t size, char fill_char) : pimpl_{std::make_unique<BitmapImpl>()}
+Bitmap::~Bitmap()
 {
-    pimpl_->image_.resize(size);
+}
 
-    fill_n(pimpl_->image_.begin(), pimpl_->image_.size(), fill_char);
+Bitmap::Bitmap(size_t size, char fill_char)
+    : pimpl_ {std::make_unique<Bitmap::BitmapImpl>(new char[size], size)}
+{
+    fill_n(pimpl_->pixels_, pimpl_->size_, fill_char);
 }
 
 void Bitmap::draw()
 {
     cout << "Image: ";
-    for (size_t i = 0; i < pimpl_->image_.size(); ++i)
-        cout << pimpl_->image_[i];
+    pimpl_->render();
     cout << endl;
 }
